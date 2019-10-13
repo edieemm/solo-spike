@@ -2,11 +2,10 @@ import React from 'react';
 
 import { compose, withProps, lifecycle } from "recompose"
 import { withScriptjs, withGoogleMap, GoogleMap, Marker } from "react-google-maps"
-import MarkerWithLabel from "react-google-maps/lib/components/addons/MarkerWithLabel";
 
 const MyMapComponent = compose(
     withProps({
-        googleMapURL: `https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=place&key=API`,
+        googleMapURL: `https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=place&key=${process.env.API_KEY}`,
         loadingElement: <div style={{ height: `100%` }} />,
         containerElement: <div style={{ height: `400px` }} />,
         mapElement: <div style={{ height: `100%` }} />,
