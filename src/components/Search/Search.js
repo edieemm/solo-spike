@@ -8,6 +8,7 @@ import {
     FormHelperText,
     Button 
     } from '@material-ui/core';
+import axios from 'axios';
 
 
  //--------------COMPONENT------------------//
@@ -39,6 +40,18 @@ class App extends Component {
     };
     handleSubmit = () => {
         console.log(this.state.form)
+        let tagList = [];
+        this.state.tags.forEach(tag => {
+            if (this.state.form[tag] === true){
+                tagList.push(tag)
+            }
+        })
+        console.log('/shelters/' + tagList)
+        axios.get('/shelters/'+tagList).then(response => {
+            console.log(response.data)
+        }).catch(error => {
+            console.log(error)
+        })
     }
 
     render() {
