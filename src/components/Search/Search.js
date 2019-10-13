@@ -47,6 +47,8 @@ class App extends Component {
             }
         })
         console.log('/shelters/' + tagList)
+        // AXIOS IS CALLING TO THE WRONG PORT
+        // CONSOLE ERRORS SAY IT'S HITTING localhost/3000/shelters
         axios.get('/shelters/'+tagList).then(response => {
             console.log(response.data)
         }).catch(error => {
