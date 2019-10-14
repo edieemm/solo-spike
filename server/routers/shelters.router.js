@@ -6,7 +6,11 @@ const pool = require('../modules/pool');
 // ------------GETTING SHELTERS --------------//
 router.get('/', (req, res) => {
     //-----------query text for any call
-    const queryText = `SELECT "shelter"."id", "name", "location", "phone", "website", "user_id",array_agg(distinct "tags".tag) AS "tags", array_agg(distinct "guest_type".type) AS "types", array_agg(distinct "hours") AS "hours"
+    const queryText = `SELECT "shelter"."id", "name", "location", "phone", "website", "user_id", 
+    array_agg(distinct "tags".tag) AS "tags",
+	array_agg(distinct "guest_type") AS "types",
+	array_agg(distinct "shelter_guest_count") AS "counts",
+	array_agg(distinct "hours") AS "hours"
         FROM "shelter"  JOIN "hours" on "shelter".id = "hours".shelter_id 
         JOIN "shelter_guest_count" on "shelter".id = "shelter_guest_count".shelter_id
         JOIN "shelter_tags" on "shelter".id = "shelter_tags".shelter_id
@@ -21,40 +25,5 @@ router.get('/', (req, res) => {
             res.sendStatus(500);
         });
 });
-
-// --------------------------------------------------//
-// ------------GETTING SHELTERS BY TAGS--------------//
-router.get('/:tags', (req, res) => {
-    //turning tag params into an array
-    const tagArray = req.params.tags.split(',');
-    //-----------establishing query conditions based on tag
-    let tagConditions = `WHERE `;
-    for (let i=0; i<tagArray.length; i++){
-        if (i === tagArray.length-1){
-            tagConditions = `${tagConditions} "tag"='${tagArray[i]}'`
-        } else {
-            tagConditions = `${tagConditions} "tag"='${tagArray[i]}' OR `
-            //OR AND AND WILL NOT WORK FOR THIS SCENARIO
-        }
-    }
-    console.log('-------THESE ARE THE TAG CONDITIONS-------', tagConditions)
-    //-----------query text for any call
-    const queryText = `SELECT "shelter"."id", "name", "location", "phone", "website", "user_id",array_agg(distinct "tags".tag) AS "tags", array_agg(distinct "guest_type".type) AS "types", array_agg(distinct "hours") AS "hours"
-        FROM "shelter"  JOIN "hours" on "shelter".id = "hours".shelter_id 
-        JOIN "shelter_guest_count" on "shelter".id = "shelter_guest_count".shelter_id
-        JOIN "shelter_tags" on "shelter".id = "shelter_tags".shelter_id
-        JOIN "tags" on "tags".id = "shelter_tags".tag_id
-        JOIN "guest_type" on "guest_type".id = "shelter_guest_count".type_id
-        ${tagConditions} GROUP BY "shelter".id;`;
-    //-------------querying database
-    
-    pool.query(queryText)
-        .then((result) => { res.send(result.rows); console.log(result.rows); console.log(tagArray)})
-        .catch((err) => {
-            console.log('Error grabbing shelters by tag', err);
-            res.sendStatus(500);
-        });
-});
-
 
 module.exports = router;
