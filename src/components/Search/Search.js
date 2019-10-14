@@ -19,14 +19,19 @@ class App extends Component {
             'dinner',
             'shower',
             'laundry',
-            'hotTub'
+            'hotTub',
+            // 'Male identifying',
+            // 'Female identifying'
         ],
         form: {
             dinner: false,
             shower: false,
             laundry: false,
             hotTub: false,
-        } 
+            maleIdentifying: false,
+            femaleIdentifying: false
+        },
+        results: []
     }
     handleChange = (event, name)=> {
         this.setState({ 
@@ -36,21 +41,50 @@ class App extends Component {
                 [name]: event.target.checked 
             }
         });
-        console.log(event.target.checked)
+        // console.log(event.target.checked)
     };
     handleSubmit = () => {
         console.log(this.state.form)
-        let tagList = [];
+        let selectedTags = [];
         this.state.tags.forEach(tag => {
             if (this.state.form[tag] === true){
-                tagList.push(tag)
+                selectedTags.push(tag)
             }
         })
-        console.log('/shelters/' + tagList)
-        // AXIOS IS CALLING TO THE WRONG PORT
-        // CONSOLE ERRORS SAY IT'S HITTING localhost/3000/shelters
-        axios.get('/shelters/'+tagList).then(response => {
-            console.log(response.data)
+        // console.log('/shelters/' + selectedTags)
+        // axios.get('/shelters/'+selectedTags).then(response => {
+        //     console.log(response.data)
+        // }).catch(error => {
+        //     console.log(error)
+        // })
+
+        console.log('/shelters') 
+        axios.get('/shelters').then(response => {
+            // console.log(response.data)
+            response.data.forEach(shelter => { 
+                let matchingTags = [];
+                selectedTags.forEach(selectedTag => {
+                    shelter.tags.forEach(listingTag => {
+                        if (selectedTag === listingTag){
+                            console.log(listingTag)
+                            matchingTags.push(listingTag)
+                        }
+                    })
+                    shelter.types.forEach(listingType => {
+                        if (selectedTag === listingType) {
+                            console.log(listingType)
+                            matchingTags.push(listingType)
+                        }
+                    }) 
+                })
+                if (matchingTags.length === selectedTags.length){
+                    this.setState({
+                        ...this.state,
+                        results: [...this.state.results, shelter]
+                    })
+                    console.log(shelter)
+                }
+            })
         }).catch(error => {
             console.log(error)
         })

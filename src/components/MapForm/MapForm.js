@@ -1,3 +1,4 @@
+
 import React, {Component} from 'react';
 import Map from '../Map/Map'
 import { FormControl, Select, MenuItem, FormHelperText } from '@material-ui/core';
@@ -21,7 +22,7 @@ class App extends Component {
         this.getSelection(event.target.value.location);
     }
     getSelection = (location) => {
-        let url = `https://maps.googleapis.com/maps/api/place/findplacefromtext/json?key=${process.env.API_KEY}&fields=photos,formatted_address,name,rating,opening_hours,geometry&inputtype=textquery&input=${location}`
+        let url = `https://maps.googleapis.com/maps/api/place/findplacefromtext/json?key=${process.env.REACT_APP_API_KEY}&fields=photos,formatted_address,name,rating,opening_hours,geometry&inputtype=textquery&input=${location}`
         let proxy = "https://cors-anywhere.herokuapp.com/"
         axios({
             method: 'GET',
@@ -29,7 +30,7 @@ class App extends Component {
             proxyurl: proxy
         })
         .then((response) => {
-            console.log(response.data)
+            console.log(response.data.candidates[0].geometry.location)
             this.setState({
                 ...this.state,
                 googlePlace: response.data.candidates[0]

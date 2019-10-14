@@ -7,7 +7,7 @@ import Search from './components/Search/Search'
 function App() {
   return (
     <div className="App">
-      {/* <MapForm /> */}
+      <MapForm />
       <Search />      
     </div>
   );
